@@ -89,8 +89,14 @@ class PhoneAgent:
         logging.info(f"Session started: {self.context['session_id']}")
     
     def _setup_directories(self):
-        """Create necessary directories."""
-        Path(self.config['screenshot_dir']).mkdir(parents=True, exist_ok=True)
+        """Create necessary directories, clearing old screenshots."""
+        screenshot_dir = Path(self.config['screenshot_dir'])
+        if screenshot_dir.exists():
+            for f in screenshot_dir.iterdir():
+                if f.is_file():
+                    f.unlink()
+            logging.info("Cleared previous screenshots")
+        screenshot_dir.mkdir(parents=True, exist_ok=True)
         logging.info(f"Screenshots directory: {self.config['screenshot_dir']}")
     
     def _check_adb_connection(self):
@@ -339,6 +345,10 @@ class PhoneAgent:
         escaped_text = escaped_text.replace(" ", "%s")  # ADB requires %s for spaces
         
         logging.info(f"Typing: {text}")
+        # Clear existing text: Ctrl+A (select all) then DEL
+        # keycombination 113=KEYCODE_CTRL_LEFT, 29=KEYCODE_A (requires Android 12+)
+        self._run_adb_command('shell input keycombination 113 29')
+        self._run_adb_command('shell input keyevent KEYCODE_DEL')
         self._run_adb_command(f'shell input text "{escaped_text}"')
     
     def _execute_wait(self, action: Dict[str, Any]):

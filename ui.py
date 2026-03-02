@@ -287,7 +287,7 @@ def create_ui():
     
     Path(current_config['screenshot_dir']).mkdir(parents=True, exist_ok=True)
     
-    with gr.Blocks(title="Phone Agent Control Panel", theme=gr.themes.Soft()) as demo:
+    with gr.Blocks(title="Phone Agent Control Panel") as demo:
         gr.Markdown("# 📱 Phone Agent Control Panel")
         gr.Markdown("*Powered by Qwen3-VL-30B for mobile GUI automation*")
         
@@ -324,8 +324,7 @@ def create_ui():
                     label="📋 Execution Log",
                     lines=15,
                     max_lines=20,
-                    interactive=False,
-                    show_copy_button=True
+                    interactive=False
                 )
                 
                 with gr.Row():
@@ -486,7 +485,8 @@ def main():
         server_name="0.0.0.0",
         server_port=7860,
         share=False,
-        show_error=True
+        show_error=True,
+        theme=gr.themes.Soft()
     )
 
 
